@@ -1,0 +1,25 @@
+pragma solidity ^0.4.25;
+
+contract Demo {
+    // string constant name="raj";
+    // uint public age;
+    // string public city = "bhvn";
+    
+    string name;
+    uint age;
+    
+    constructor() public {
+        // name = "myname";
+        age = 21;
+        // city = "goa";
+    }
+    
+    function set(string _name,uint _age) public{
+        name=_name;
+        age=_age;
+    }
+    
+    function get()public constant returns(string,uint){
+        return (name,age);
+    }
+}
