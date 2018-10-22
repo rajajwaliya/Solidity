@@ -1,0 +1,22 @@
+pragma solidity ^0.4.17;
+
+// library that we are use in test.sol
+
+library Test{
+    
+    function increment(uint i) public constant returns (uint){
+        return i+1;
+    }
+    
+    function decrement(uint d) public constant returns (uint){
+        return d-1;
+    }
+    
+    function add(uint x,uint y) public constant returns (uint){
+        return (x+y);
+    }
+    
+    function sub(uint a,uint b) public constant returns (uint){
+        return (a-b);
+    }
+}

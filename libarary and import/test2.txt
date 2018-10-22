@@ -1,0 +1,26 @@
+pragma solidity ^0.4.20;
+
+import "browser/test.sol";
+
+contract Test2{
+    using Test for uint;
+    //  using Test for *;
+    // * use for the string
+    
+    function testinc(uint inc) public constant returns(uint){
+        return inc.increment();
+    }
+    
+    function testdec(uint dec) public constant returns(uint){
+        return dec.decrement();
+    }
+    
+     function testadd(uint one,uint two) public constant returns(uint){
+        return one.add(two);
+    }
+    
+     function testsub(uint first,uint sec) public constant returns(uint){
+        return first.sub(sec);
+    }
+}
+//here we call library function with our function arguments

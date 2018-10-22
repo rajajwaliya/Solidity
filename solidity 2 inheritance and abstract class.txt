@@ -1,0 +1,36 @@
+pragma solidity ^0.4.0;
+
+interface mydemo{
+    function laon() external constant returns (bool);
+}
+
+
+contract Bank is mydemo{
+    
+    uint private value;
+    
+    constructor(uint val) public{
+        value=val;
+       
+    }
+   
+    function add(uint x) public{
+        value = value + x;
+    }
+    
+    function sub(uint y) public{
+        value= value - y;
+    }
+    
+    function finalout()public constant returns (uint){
+        return value;
+    }
+    
+    function laon() public constant returns (bool){
+        return value>0;
+    }
+}
+
+contract Test is Bank(30){
+}
+

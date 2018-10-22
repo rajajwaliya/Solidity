@@ -1,0 +1,62 @@
+pragma solidity ^0.4.17;
+
+contract Main{
+    uint private value;
+    address private owner;
+    
+    modifier ownerfun(){
+        require(owner==msg.sender);
+        _;
+    }
+    
+    constructor(uint val) public{
+        value=val;
+        owner=msg.sender;
+       
+    }
+   
+    function add(uint x) public ownerfun{
+        value = value + x;
+    }
+    
+    function sub(uint y) public ownerfun{
+        value= value - y;
+    }
+    
+    function finalout()public constant ownerfun returns (uint){
+        return value;
+    }
+    
+    function laon() public constant returns (bool){
+        return value>0;
+    }
+}    
+
+contract Sub is Main(50){
+    string public name;
+    uint public age;
+    
+    function set (string nam,uint ag) public {
+        name = nam;
+        age = ag;
+    }
+    function get () public constant returns (string,uint){
+        return (name,age);
+    }
+}
+
+contract TestThrows{
+    
+    function testassert(){
+        assert(1==2);
+    }
+        
+    function testRequire(){
+        require(2==1);
+    }
+
+    function testrevert(){
+        revert();
+    }
+
+}
