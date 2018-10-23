@@ -1,0 +1,56 @@
+pragma solidity ^0.4.18;
+
+contract Data{
+     bool mybool = true;
+     
+     uint256 unit256= 203;
+     // 2^256 unsign integer
+     int24 int_24= -60;
+     
+     string str;
+     
+     bytes32 by= '01010111';
+     
+     enum Ac {ADD,UPDATE,REMOVE}
+     Ac acc = Ac.ADD;
+     
+     address myadd;
+     
+     function assignaddress() public {
+         myadd=msg.sender;
+         myadd.balance;
+         myadd.transfer(10);
+     }
+     
+     uint[] myarrr= [10,20,30];
+     
+     function arrayadd() public{
+         myarrr.push(10);
+         myarrr.length;
+         myarrr[0];
+     }
+     
+     uint[10] fixarry;
+     
+     struct Account{
+         uint balance;
+         int id;
+     }
+     
+     Account account;
+     
+     function stuctfun() public{
+         account.balance=10;
+     }
+     
+     mapping (address => Account) acmap;
+     
+     function () payable public {
+         acmap[msg.sender].balance+=msg.value;
+     }
+     
+     function getbalance() public constant returns (uint){
+         return acmap[msg.sender].balance;
+     }
+     
+}

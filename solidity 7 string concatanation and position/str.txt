@@ -1,0 +1,16 @@
+pragma solidity ^0.4.18;
+
+import "browser/stringlib.sol";
+
+contract Str{
+    using Strlib for string;
+    
+    function addstr (string base,string value)public constant returns(string){
+        return base.concate("_base");
+    }
+     
+    function find (string base,string value)public constant returns(int){
+        return base.pos("t");
+    }
+
+}

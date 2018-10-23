@@ -1,0 +1,41 @@
+pragma solidity ^0.4.18;
+
+library Strlib{
+    
+    function concate(string first,string second) returns(string){
+        
+        bytes memory firstby = bytes(first);
+        bytes memory secondby = bytes(second);
+        
+        string memory newval = new string(firstby.length + secondby.length);
+        bytes memory temval = bytes(newval);
+        
+        uint i;
+        uint j;
+        
+        for(i=0;i<firstby.length;i++){
+            temval[j++]=firstby[i];
+        }
+        
+        for(i=0;i<secondby.length;i++){
+            temval[j++]=secondby[i];
+        }
+        
+        return string(temval);
+    }
+    
+    function pos(string first,string second) returns (int){
+        bytes memory firstby = bytes(first);
+        bytes memory secondby = bytes(second);
+        
+        assert(secondby.length <= 1);
+        
+        for(uint i=0;i<=firstby.length;i++){
+            if(firstby[i]==secondby[0]){
+                return (int(i)+1);
+            }
+        }
+    return -1;
+    }
+    
+}
