@@ -1,0 +1,57 @@
+pragma solidity ^0.4;
+
+import "browser/erc20.sol";
+
+contract MyTocken is ERC20{
+    
+    string public constant name = "My First Tocken";
+    uint public constant decimal = 18;
+    string public constant symbol = "Tocken";
+    
+    uint private constant finalsupply = 1000000000000000000;
+    mapping (address => uint) private finaladdressof;
+    mapping (address => mapping(address => uint)) private finalallowance;
+    
+    constructor() public{
+        finaladdressof[msg.sender]=finalsupply;
+    }
+    
+     function totalSupply()external constant returns (uint theTotalSupply){
+         theTotalSupply = finalsupply;
+     }
+    
+    function balanceOf(address _owner)public view returns (uint balance){
+        return finaladdressof[_owner];
+    }
+    
+    function transfer(address _to, uint _value)external returns (bool success){
+        require(_value>0 && _value<=balanceOf(msg.sender));
+        
+         finaladdressof[msg.sender] -= _value;
+         finaladdressof[_to] += _value;
+         return true;
+    }
+    
+    function transferFrom(address _from, address _to, uint _value)public returns (bool success){
+     
+       require(finalallowance[_from][msg.sender] > 0 
+            && _value > 0 
+            && finalallowance[_from][msg.sender] >= _value 
+            && finaladdressof[_from] >= _value);
+            
+            finaladdressof[_from] -= _value;
+            finaladdressof[_to] += _value;
+            // Missed from the video
+            finalallowance[_from][msg.sender] -= _value;
+            return true;
+    }
+    
+     function approve(address _spender, uint _value)public returns (bool success){
+        finalallowance[msg.sender][_spender] = _value;
+        return true;
+     }
+     
+   function allowance(address _owner, address _spender)public constant returns (uint remaining){
+       return finalallowance[_owner][_spender];
+   }
+}
