@@ -105,15 +105,19 @@ contract BNB is SafeMath{
         emit Transfer(_from, _to, _value);
         return true;
     }
+    
+    //effect directly on totalSupply 
 
     function burn(uint256 _value)public returns (bool success) {
-        if (balanceOf[msg.sender] < _value) revert();            // Check if the sender has enough
+        if (balanceOf[msg.sender] < _value) revert();                                    // Check if the sender has enough
 		if (_value <= 0) revert(); 
-        balanceOf[msg.sender] = SafeMath.safeSub(balanceOf[msg.sender], _value);                      // Subtract from the sender
-        totalSupply = SafeMath.safeSub(totalSupply,_value);                                // Updates totalSupply
+        balanceOf[msg.sender] = SafeMath.safeSub(balanceOf[msg.sender], _value);          // Subtract from the sender
+        totalSupply = SafeMath.safeSub(totalSupply,_value);                               // Updates totalSupply
         emit Burn(msg.sender, _value);
         return true;
     }
+	
+	//effect directly on balanceOf
 	
 	function freeze(uint256 _value)public returns (bool success) {
         if (balanceOf[msg.sender] < _value) revert();            // Check if the sender has enough
@@ -123,6 +127,8 @@ contract BNB is SafeMath{
         emit Freeze(msg.sender, _value);
         return true;
     }
+	
+	//effect directly on balanceOf
 	
 	function unfreeze(uint256 _value)public returns (bool success) {
         if (freezeOf[msg.sender] < _value) revert();            // Check if the sender has enough
@@ -134,6 +140,7 @@ contract BNB is SafeMath{
     }
 	
 	// transfer balance to owner
+	// withdrawEther that tacken by fallback
 	function withdrawEther(uint256 amount) public {
 		if(msg.sender != owner) revert();
 		owner.transfer(amount);
