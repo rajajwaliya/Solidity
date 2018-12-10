@@ -44,4 +44,154 @@ miner.constructor          	miner.setEtherbase         miner.toLocaleString
 miner.getHashrate          	miner.setExtra             miner.toString             
 miner.hasOwnProperty       	miner.setGasPrice          miner.valueOf              
 miner.isPrototypeOf        	miner.start                
-miner.propertyIsEnumerable 	miner.stop        
+miner.propertyIsEnumerable 	miner.stop
+
+
+
+
+command perform:-
+
+
+
+
+eth commands :- 
+
+eth._requestManager            
+
+eth.getBlockUncleCount         
+
+eth.getWork                    
+
+eth.accounts
+//retun list of account
+
+eth.getCode                    
+
+eth.hashrate                   
+eth.blockNumber
+
+                
+eth.getCoinbase                
+//return block number of node
+                
+eth.coinbase                   
+//return main account
+
+eth.getGasPrice                eth.isSyncing                  
+eth.compile                    eth.getHashrate                eth.mining                     
+eth.constructor                eth.getMining                  eth.namereg                    
+eth.contract                   eth.getPendingTransactions     eth.pendingTransactions        
+eth.defaultAccount             eth.getProtocolVersion         eth.protocolVersion            
+eth.defaultBlock               eth.getRawTransaction          eth.resend                     
+eth.estimateGas                eth.getRawTransactionFromBlock eth.sendIBANTransaction        
+eth.filter                     eth.getStorageAt               eth.sendRawTransaction         
+eth.gasPrice                   eth.getSyncing                 eth.sendTransaction            
+eth.getAccounts
+//return accounts                
+
+eth.getTransaction             
+
+eth.sign                       
+
+eth.getBalance
+//get balance of account
+
+eth.getTransactionCount        eth.signTransaction            
+eth.getBlock                   eth.getTransactionFromBlock    eth.submitTransaction          
+eth.getBlockNumber             eth.getTransactionReceipt      eth.submitWork                 
+eth.getBlockTransactionCount   eth.getUncle                   eth.syncing 
+
+
+
+personal commands :-
+
+personal._requestManager 	personal.getListWallets  	
+
+personal.newAccount
+//cereate new account
+      
+personal.constructor     	personal.importRawKey    	personal.sendTransaction 
+personal.deriveAccount   	personal.listAccounts    	personal.sign            
+personal.ecRecover       	personal.listWallets     	
+
+personal.unlockAccount
+//unlock the account before transaction
+   
+personal.getListAccounts
+//retun account list
+
+personal.lockAccount
+//lock the account 
+
+
+
+ 
+admin commands:-
+
+admin.addPeer
+//to add node 
+
+
+admin.importChain
+
+admin.startRPC             
+admin.constructor          admin.isPrototypeOf        	admin.startWS              
+
+admin.datadir              
+
+admin.nodeInfo
+//rerurn node info of self node
+
+admin.stopRPC              
+admin.exportChain          
+
+admin.peers 
+//return the connected peer
+
+admin.stopWS               
+admin.getDatadir           admin.propertyIsEnumerable 	admin.toLocaleString       
+admin.getNodeInfo
+//to get node info of self node          
+
+admin.removePeer
+//to remove the current peer
+
+admin.toString             
+
+admin.getPeers             admin.sleep                	admin.valueOf              
+admin.hasOwnProperty       admin.sleepBlocks   
+
+
+
+miner commands:-
+
+miner.constructor          	
+
+miner.setEtherbase         
+
+miner.toLocaleString       
+
+miner.getHashrate 
+//return hash rate of minig
+
+
+miner.setExtra             
+
+miner.toString             
+
+miner.hasOwnProperty       	
+
+miner.setGasPrice          
+//set gas price in account
+
+miner.valueOf              
+
+miner.isPrototypeOf        	
+
+miner.start   
+//for start mining
+             
+miner.propertyIsEnumerable 	
+
+miner.stop 
+//for stop mining      
