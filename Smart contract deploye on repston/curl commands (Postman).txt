@@ -1,0 +1,81 @@
+first terminal :-
+startnode.cmd
+
+second terminal :-
+
+
+geth attach ipc:\\.\pipe\geth.ipc
+admin.startRPC("127.0.0.1", 8545, "*", "web3,db,net,eth")
+admin.stopRPC()
+
+
+postman json rpc commands:-
+
+
+{"jsonrpc":"2.0","method":"web3_clientVersion","params":[],"id":67}
+
+- Returns the current client version
+
+{"jsonrpc":"2.0","method":"web3_sha3","params":["0x68656c6c6f20776f726c64"],"id":64}
+
+- return SHA3-256
+
+{"jsonrpc":"2.0","method":"net_version","params":[],"id":67}
+
+- return network id
+
+{"jsonrpc":"2.0","method":"net_version","params":[],"id":67}
+
+- return true if clint listen for network
+
+{"jsonrpc":"2.0","method":"net_peerCount","params":[],"id":74}
+
+- return currently connected peer
+
+{"jsonrpc":"2.0","method":"eth_protocolVersion","params":[],"id":67}
+
+- return ethereum protocol version 
+
+'{"jsonrpc":"2.0","method":"eth_syncing","params":[],"id":1}
+
+- return sysning result
+
+{"jsonrpc":"2.0","method":"eth_coinbase","params":[],"id":64}
+
+- return the coinbase address
+
+{"jsonrpc":"2.0","method":"eth_mining","params":[],"id":64}
+
+- return true if mining process starts
+
+{"jsonrpc":"2.0","method":"eth_hashrate","params":[],"id":71}
+
+- return hashrate of mining
+
+{"jsonrpc":"2.0","method":"eth_gasPrice","params":[],"id":73}
+
+- return gas price
+
+{"jsonrpc":"2.0","method":"eth_accounts","params":[],"id":1}
+
+- return list of accounts
+
+{"jsonrpc":"2.0","method":"eth_blockNumber","params":[],"id":1}
+
+- return block number of node
+
+{"jsonrpc":"2.0","method":"eth_getBalance","params":["0xc94770007dda54cF92009BFF0dE90c06F603a09f", "latest"],"id":1}
+
+- return account balance
+
+{"jsonrpc":"2.0","method":"eth_getTransactionCount","params":["0xc94770007dda54cF92009BFF0dE90c06F603a09f","latest"],"id":1}
+
+- returns the number of transactions sent from an address
+
+{"jsonrpc":"2.0","method":"eth_sign","params":["0x641c57cd765af00428f7d8448d411c9ed8453615", "0xdeadbeaf"],"id":1}
+
+- return Signature of account
+
+{"jsonrpc":"2.0","method":"eth_sendTransaction","params":[{"from": "0x641c57cd765af00428f7d8448d411c9ed8453615", "to": "0xd46e8dd67c5d32be8058bb8eb970870f07244567", "gas" : "0x2DC6C0", "gasPrice": "0xEA60", "value": "0x9184e72a000", "data": "0xfeea5290892ef59f9b38e45586b07cedf82ff45f7710f339cab382e125198911645492654fb02520fab752c46e48416aa57dd84065a987cc3e5ee8f4458749c81b"}],"id":7777}
+
+- to perform transaction from one account to onther
