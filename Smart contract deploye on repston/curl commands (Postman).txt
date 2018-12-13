@@ -79,3 +79,15 @@ postman json rpc commands:-
 {"jsonrpc":"2.0","method":"eth_sendTransaction","params":[{"from": "0x641c57cd765af00428f7d8448d411c9ed8453615", "to": "0xd46e8dd67c5d32be8058bb8eb970870f07244567", "gas" : "0x2DC6C0", "gasPrice": "0xEA60", "value": "0x9184e72a000", "data": "0xfeea5290892ef59f9b38e45586b07cedf82ff45f7710f339cab382e125198911645492654fb02520fab752c46e48416aa57dd84065a987cc3e5ee8f4458749c81b"}],"id":7777}
 
 - to perform transaction from one account to onther
+
+{"jsonrpc":"2.0","method":"eth_getTransactionByHash","params":["0xff331a6c1459ae6a69cafde5a77ddf419eb7cbe6a0c444fb1fe6cf54ec44d637"],"id":1}
+
+- return transaction details
+
+{"jsonrpc":"2.0","method":"eth_newBlockFilter","params":[],"id":7777}
+
+- return address of new block
+
+{"jsonrpc":"2.0","method":"eth_getWork","params":[],"id":73}
+
+- return hash of current block
