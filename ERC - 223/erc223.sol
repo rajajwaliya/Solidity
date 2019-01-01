@@ -1,4 +1,4 @@
-pragma solidity ^0.5.1;
+pragma solidity 0.5.1;
 
 contract ERC223ReceivingContract {
     function tokenFallback(address _from, uint _value, bytes memory _data)public;
@@ -17,7 +17,7 @@ contract ERC223Interface {
 * @title SafeMath
 * @dev Math operations with safety checks that throw on error
 */
-library safeMath {
+library safemathlib {
     /**
     * @dev Multiplies two numbers, reverts on overflow.
     */
@@ -125,13 +125,11 @@ contract BlackList is Ownable{
     }
     
     function addBlackList (address _evilUser) public onlyOwner {
-        require(!isBlackListed[_evilUser]);
         isBlackListed[_evilUser] = true;
         emit AddedBlackList(_evilUser);
     }
 
     function removeBlackList (address _clearedUser) public onlyOwner {
-         require(isBlackListed[_clearedUser]);
         isBlackListed[_clearedUser] = false;
         emit RemovedBlackList(_clearedUser);
     }
@@ -140,7 +138,7 @@ contract BlackList is Ownable{
 
 contract ERC223 is BlackList,ERC223Interface{
     
-    using safeMath for uint256;
+    using safemathlib for uint256;
     string internal _name;
     string internal _symbol;
     uint8 internal _decimals;
@@ -151,6 +149,7 @@ contract ERC223 is BlackList,ERC223Interface{
     
     mapping (address => uint256) internal balances;
     mapping (address => mapping (address => uint256)) internal allowed;
+    mapping (address => bool) internal isBlackListed;
     
     constructor(string memory name, string memory symbol, uint8 decimals, uint256 totalSupply) public {
         _symbol = symbol;
@@ -175,7 +174,6 @@ contract ERC223 is BlackList,ERC223Interface{
     event Params(uint feeBasisPoints,uint maximumFee,uint minimumFee);
     event DestroyedBlackFunds(address _blackListedUser,uint _balance);
     
-    event Deposit(address sender,address from,uint val,bytes timestamp);
     /* Returns the balance of a particular account */
     function balanceOf(address _address)public view returns(uint256 balance) {
         return balances[_address];
@@ -217,7 +215,7 @@ contract ERC223 is BlackList,ERC223Interface{
         }
         uint fee = calculateFee(_value);
         // Prevent transfer to 0x0 address.
-        require (_to != msg.sender);
+        require (_to != address(0x0));
         //check receiver is not owner
         require(_to != address(0));
         //Check transfer value is > 0;
@@ -320,6 +318,7 @@ contract ERC223 is BlackList,ERC223Interface{
         uint256 amount = token.balanceOf(address(this));
         return token.transfer(owner, amount);
     }
+    
 
     /*onlyOwner is custom modifier
     owner can kill this contract owners address*/
@@ -327,4 +326,5 @@ contract ERC223 is BlackList,ERC223Interface{
         require(_owner == owner);
         selfdestruct(_owner);
     }
+
 }
