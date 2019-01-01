@@ -4,7 +4,7 @@ pragma solidity ^0.5.1;
  * Contract that is working with ERC223 tokens
  */
  
-  import "browser/erc223.sol";
+  import "https://raw.githubusercontent.com/rajajwaliya/Solidity/master/ERC%20-%20223/erc223.sol";
  
   contract ContractReceiver {
      
