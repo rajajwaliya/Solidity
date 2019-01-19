@@ -1,0 +1,40 @@
+ - deployee AccountLevelsTest and set address,2 for address level.
+ - deplyee 2 erc20 contracts.
+ - deplyee etherdelta contract with fee account,AccountLevelsTest(contract address),and maker and taker fees in percetage.
+ - call aproove function on 2 erc20 contracts on contract address of etherdelta contract.
+ - deposite tocens in etherdelta tockens
+ - now set the order first to exchange the tockens ...
+ - find the hash message releted to order.
+ - gethe the hash meassge fro mlog of gethash.
+ - sign the hash message with(metamask)(browser's console) ....
+      
+   var sig = web3.eth.sign(web3.eth.accounts[0],"0x1b147109c98f10be4bd41436d92439a02cea9e378eff4b6860e6a1061eb90fbd",function(err,result){
+	if(err){
+		console.log(err)
+	}
+	if(result)
+	{
+		console.log(result)
+	}
+   })
+
+ - find the v,r,s in sign message.
+   
+   public class HelloWorld{
+
+     public static void main(String []args){
+         String s = "0x59ab469b4f388ade678f84d5c3f38455e6fdfdfc60592311aa9714c756edac751c04c08f1fd8df593f4a4cc06a3ff1605823bb8389938811b849092d60acb21c1c";
+         
+        String v = s.substring(130,132);
+        System.out.println("0x"+v);
+        String r = s.substring(0,66);
+        System.out.println(r);
+        String se = s.substring(66,130);
+        System.out.println("0x"+se);
+        
+     }
+}
+
+ - now check the test tred function first ...
+ - now run the tred function...
+ - and then check the condition and reming methods.
