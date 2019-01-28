@@ -1,0 +1,33 @@
+flow of multi sign wallet...
+
+1) genrate two contract
+- multi sign 
+- erc20
+there are two methods 1) sendMultiSigToken (for transfer tockens) 2) sendMultiSig (for transfer ether).
+now choose one of them
+
+2) genrate hash releted your methods 
+for sendMultiSig() hash becomes keccak256("ETHER", toAddress, value, data, expireTime, sequenceId)
+for sendMultiSigToken() becomes keccak256("ERC20", toAddress, value, tokenContractAddress, expireTime, sequenceId)
+
+
+3) now sign the hash with signer account
+code like :-
+ 
+var sig = web3.eth.sign(web3.eth.accounts[0],"0xe9ec572ee6d51f5cb3818d42bb6571e5f19f1a1c1cc7425b86f7caa4356f2227",function(err,result){
+	if(err){
+		console.log(err)
+	}
+	if(result)
+	{
+		console.log(result)
+	}
+})
+
+4) genrate the forwoder account with help of creatForwoder() method
+ - now see the new forwoder address on ether scan
+ - now send the tocken on forwoder address if you  use sendMultiSigToken() method
+ - or send ether directly with meeta mask if you use the sendMultiSig() method
+ - if you will use sendMultiSigToken() then call another method for flush the tocken to forword address to contract address.
+
+5) now finnaly use your method sendMultiSigToken() or sendMultiSig()
