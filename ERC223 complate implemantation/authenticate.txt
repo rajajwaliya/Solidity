@@ -1,0 +1,82 @@
+pragma solidity ^0.5.3;
+
+/**
+ * @title Ownable
+ * @dev The Ownable contract has an owner address, and provides basic authorization control
+ * functions, this simplifies the implementation of "user permissions".
+ */
+contract Ownable {
+    address public owner;
+
+    /**
+      * @dev The Ownable constructor sets the original `owner` of the contract to the sender
+      * account.
+      */
+    constructor() public {
+        owner = msg.sender;
+    }
+
+    /**
+      * @dev Throws if called by any account other than the owner.
+      */
+    modifier onlyOwner() {
+        require(msg.sender == owner);
+        _;
+    }
+}
+
+/** 
+* @dev Auctheticate contract use to Autheticate other contract. 
+*/
+contract Auctheticate is Ownable{
+    
+    address[] AuthContract;
+    
+    //set the contract address that are our Autheticate address.
+    //@param contractaddress is array of address.
+    constructor(address[] memory contractaddress) public{
+        
+        require(contractaddress.length==1);
+        require(isContract(contractaddress[0]));
+        AuthContract = contractaddress;
+        // for(uint i=0;i<contractaddress.length;i++)
+        // AuthContract.push(contractaddress[i]);
+    }
+    
+    //we can set auutheticate contract also after deplye the AuthContract contract also via this method.
+    //@param contractaddress is address of contract.
+    function setAuthContract(address contractaddress) onlyOwner public {
+        require(isContract(contractaddress),"error of contract");
+        bool exists=false;
+        
+        for(uint i=0;i<AuthContract.length;i++)
+            if(contractaddress==AuthContract[i]) exists=true;
+            
+        if(!exists) AuthContract.push(contractaddress);
+    }
+    
+    //method that get the authentic contract names
+    function getAuthAddress() public view returns (address[] memory){
+        return AuthContract;
+    }
+    
+    //method that used by another contract to prove thier authenticity.
+    //@param contractaddress is address of other contract who wants to prove thier authenticity.
+    function checkforAuthContract(address contractaddress) public view returns (bool){
+        bool check = false;
+        
+        for(uint i = 0; i<AuthContract.length;i++ )
+           if(contractaddress==AuthContract[i]) check=true;
+           
+        return check;
+    }
+    
+    function isContract(address _addr) public view returns (bool is_contract) {
+        uint length;
+        assembly {
+            //retrieve the size of the code on target address, this needs assembly
+            length := extcodesize(_addr)
+        }
+        return (length>0);
+    }
+}
