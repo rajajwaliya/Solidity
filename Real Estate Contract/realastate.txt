@@ -1,0 +1,24 @@
+realestate's contract steps :- https://github.com/kopylash/blockchain-real-estate-v1/blob/master/ethereum/contracts/EnlistmentToContract.sol
+
+run in metamask (not wokr in jvm)
+constuctor :- "demo@gmail.com","demo road","3","256","7","567001" 
+
+1:- ) get Enlistment by Tenant (dettails aboout property).
+
+2:- ) sendOffer() only call by andmin to send avilable proerty offer at price to Tenant
+
+3:- ) cancelOffer() only call by owner of contract to cacel the sendOffer().
+
+4:- ) getOffer() for tenant to view the offer.
+
+5:- ) reviewOffer() done by the owner to approve the offer.
+
+6:- ) submitDraft() done by user for owner to perform aggreement between landlord and tenant.
+
+7:- ) cancelAgreement() done by user for cacel aggreement between landlord and tenant.
+
+8:- ) aggreement sign with hash by landlord if landlord accepts the condition via landlordSignAgreement()
+
+9:- ) aggreement sign with hash by tenant if tenant accepts the condition via tenantSignAgreement()
+
+10:- ) complate the aggreement when owner pay the first month rent to landlord via receiveFirstMonthRent().
