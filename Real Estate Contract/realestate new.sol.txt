@@ -1,0 +1,697 @@
+pragma solidity ^0.4.25;
+
+/**
+ * @title SafeMath
+ * @dev Math operations with safety checks that throw on error
+ */
+library SafeMath {
+
+  /**
+  * @dev Multiplies two numbers, throws on overflow.
+  */
+  function mul(uint256 _a, uint256 _b) internal pure returns (uint256 c) {
+    // Gas optimization: this is cheaper than asserting 'a' not being zero, but the
+    // benefit is lost if 'b' is also tested.
+    // See: https://github.com/OpenZeppelin/openzeppelin-solidity/pull/522
+    if (_a == 0) {
+      return 0;
+    }
+
+    c = _a * _b;
+    assert(c / _a == _b);
+    return c;
+  }
+
+  /**
+  * @dev Integer division of two numbers, truncating the quotient.
+  */
+  function div(uint256 _a, uint256 _b) internal pure returns (uint256) {
+    // assert(_b > 0); // Solidity automatically throws when dividing by 0
+    // uint256 c = _a / _b;
+    // assert(_a == _b * c + _a % _b); // There is no case in which this doesn't hold
+    return _a / _b;
+  }
+
+  /**
+  * @dev Subtracts two numbers, throws on overflow (i.e. if subtrahend is greater than minuend).
+  */
+  function sub(uint256 _a, uint256 _b) internal pure returns (uint256) {
+    assert(_b <= _a);
+    return _a - _b;
+  }
+
+  /**
+  * @dev Adds two numbers, throws on overflow.
+  */
+  function add(uint256 _a, uint256 _b) internal pure returns (uint256 c) {
+    c = _a + _b;
+    assert(c >= _a);
+    return c;
+  }
+}
+
+library Roles {
+  struct Role {
+    mapping (address => bool) bearer;
+  }
+
+  /**
+   * @dev give an address access to this role
+   */
+  function add(Role storage _role, address _addr)
+    internal
+  {
+    _role.bearer[_addr] = true;
+  }
+
+  /**
+   * @dev remove an address' access to this role
+   */
+  function remove(Role storage _role, address _addr)
+    internal
+  {
+    _role.bearer[_addr] = false;
+  }
+
+  /**
+   * @dev check if an address has this role
+   * // reverts
+   */
+  function check(Role storage _role, address _addr)
+    internal
+    view
+  {
+    require(has(_role, _addr));
+  }
+
+  /**
+   * @dev check if an address has this role
+   * @return bool
+   */
+  function has(Role storage _role, address _addr)
+    internal
+    view
+    returns (bool)
+  {
+    return _role.bearer[_addr];
+  }
+}
+
+    /**
+    * @title RBAC (Role-Based Access Control)
+    * @author Matt Condon (@Shrugs)
+    * @dev Stores and provides setters and getters for roles and addresses.
+    * Supports unlimited numbers of roles and addresses.
+    * See //contracts/mocks/RBACMock.sol for an example of usage.
+    * This RBAC method uses strings to key roles. It may be beneficial
+    * for you to write your own implementation of this interface using Enums or similar.
+    */
+    contract RBAC {
+        using Roles for Roles.Role;
+
+    mapping (string => Roles.Role) private roles;
+
+    event RoleAdded(address indexed operator, string role);
+    event RoleRemoved(address indexed operator, string role);
+
+    /**
+    * @dev reverts if addr does not have role
+    * @param _operator address
+    * @param _role the name of the role
+    * // reverts
+    */
+    
+    function checkRole(address _operator, string _role)
+        public
+        view
+    {
+        roles[_role].check(_operator);
+    }
+
+    /**
+    * @dev determine if addr has role
+    * @param _operator address
+    * @param _role the name of the role
+    * @return bool
+    */
+    
+    function hasRole(address _operator, string _role)
+        public
+        view
+        returns (bool)
+    {
+        return roles[_role].has(_operator);
+    }
+
+    /**
+    * @dev add a role to an address
+    * @param _operator address
+    * @param _role the name of the role
+    */
+    function addRole(address _operator, string _role)
+        internal
+    {
+        roles[_role].add(_operator);
+        emit RoleAdded(_operator, _role);
+    }
+
+    /**
+    * @dev remove a role from an address
+    * @param _operator address
+    * @param _role the name of the role
+    */
+    function removeRole(address _operator, string _role)
+        internal
+    {
+        roles[_role].remove(_operator);
+        emit RoleRemoved(_operator, _role);
+    }
+
+}
+
+
+contract Ownable {
+    address public owner;
+
+    event OwnershipTransferred(
+    address indexed previousOwner,
+    address indexed newOwner
+    );
+
+    /**
+    * @dev The Ownable constructor sets the original `owner` of the contract to the sender
+    * account.
+    */
+    constructor() public {
+        owner = msg.sender;
+    }
+
+    /**
+    * @dev Throws if called by any account other than the owner.
+    */
+    modifier onlyOwner() {
+        require(msg.sender == owner);
+    _;
+    }
+
+    /**
+    * @dev Allows the current owner to transfer control of the contract to a newOwner.
+    * @param _newOwner The address to transfer ownership to.
+    */
+    function transferOwnership(address _newOwner) public onlyOwner {
+        require(_newOwner != address(0));
+        emit OwnershipTransferred(owner, _newOwner);
+        owner = _newOwner;
+    }
+}
+
+/**
+ * @title Whitelist
+ * @dev The Whitelist contract has a whitelist of addresses, and provides basic authorization control functions.
+ * This simplifies the implementation of "user permissions".
+ */
+contract Whitelist is Ownable, RBAC {
+  string public constant ROLE_WHITELISTED = "whitelist";
+
+  /**
+   * @dev Throws if operator is not whitelisted.
+   * @param _operator address
+   */
+  modifier onlyIfWhitelisted(address _operator) {
+    checkRole(_operator, ROLE_WHITELISTED);
+    _;
+  }
+
+  /**
+   * @dev add an address to the whitelist
+   * @param _operator address
+   * @return true if the address was added to the whitelist, false if the address was already in the whitelist
+   */
+  function addAddressToWhitelist(address _operator)
+    public
+    onlyOwner
+  {
+    addRole(_operator, ROLE_WHITELISTED);
+  }
+
+  /**
+   * @dev getter to determine if address is in whitelist
+   */
+  function whitelist(address _operator)
+    public
+    view
+    returns (bool)
+  {
+    return hasRole(_operator, ROLE_WHITELISTED);
+  }
+
+  /**
+   * @dev add addresses to the whitelist
+   * @param _operators addresses
+   * @return true if at least one address was added to the whitelist,
+   * false if all addresses were already in the whitelist
+   */
+  function addAddressesToWhitelist(address[] _operators)
+    public
+    onlyOwner
+  {
+    for (uint256 i = 0; i < _operators.length; i++) {
+      addAddressToWhitelist(_operators[i]);
+    }
+  }
+ 
+  /**
+   * @dev remove an address from the whitelist
+   * @param _operator address
+   * @return true if the address was removed from the whitelist,
+   * false if the address wasn't in the whitelist in the first place
+   */
+  function removeAddressFromWhitelist(address _operator)
+    public
+    onlyOwner
+  {
+    removeRole(_operator, ROLE_WHITELISTED);
+  }
+
+  /**
+   * @dev remove addresses from the whitelist
+   * @param _operators addresses
+   * @return true if at least one address was removed from the whitelist,
+   * false if all addresses weren't in the whitelist in the first place
+   */
+  function removeAddressesFromWhitelist(address[] _operators)
+    public
+    onlyOwner
+  {
+    for (uint256 i = 0; i < _operators.length; i++) {
+      removeAddressFromWhitelist(_operators[i]);
+    }
+  }
+
+}
+
+/**
+ * @title Destructible
+ * @dev Base contract that can be destroyed by owner. All funds in contract will be sent to the owner.
+ */
+contract Destructible is Ownable {
+  /**
+   * @dev Transfers the current balance to the owner and terminates the contract.
+   */
+  function destroy() public onlyOwner {
+    selfdestruct(owner);
+  }
+
+  function destroyAndSend(address _recipient) public onlyOwner {
+    selfdestruct(_recipient);
+  }
+}
+
+/**
+ * @title Pausable
+ * @dev Base contract which allows children to implement an emergency stop mechanism.
+ */
+contract Pausable is Ownable {
+  event Pause();
+  event Unpause();
+
+  bool public paused = false;
+
+
+  /**
+   * @dev Modifier to make a function callable only when the contract is not paused.
+   */
+  modifier whenNotPaused() {
+    require(!paused);
+    _;
+  }
+
+  /**
+   * @dev Modifier to make a function callable only when the contract is paused.
+   */
+  modifier whenPaused() {
+    require(paused);
+    _;
+  }
+
+  /**
+   * @dev called by the owner to pause, triggers stopped state
+   */
+  function pause() public onlyOwner whenNotPaused {
+    paused = true;
+    emit Pause();
+  }
+
+  /**
+   * @dev called by the owner to unpause, returns to normal state
+   */
+  function unpause() public onlyOwner whenPaused {
+    paused = false;
+    emit Unpause();
+  }
+}
+
+
+contract PropertySaleAuction is  Whitelist, Pausable, Destructible{
+    
+    address private  beneficiaryAddress;
+    bytes32 private propertyId;
+    uint256 private startingDate;
+    uint256 private endingDate;
+    uint256 private bidTime;
+    
+    uint256 private startingBid;
+    bool private autoCloseable;
+    uint256 private takeProfit;
+    uint256 private autoCloseBid;
+    uint256 public topBid;
+    address public topBidder;
+    
+    // Allowed withdrawals of previous bids
+    mapping(address => uint) private returnsPending;
+    // Will be set true once the auction is complete, preventing any further change
+    bool auctionComplete;
+    RealEstateRegistry private realEstateRegistry;
+    
+    // Events to fire when change happens.
+    event LogTopBidIncreased(address bidder, uint bidAmount);
+    event LogAuctionResult(address winner, uint bidAmount);
+    
+    constructor(address _realEstateRegistryAddress, address _beneficiaryAddress, bytes32 _propertyId, uint256 _startingBid, uint256 _bidTime ) 
+        public
+    {
+        addAddressToWhitelist(_beneficiaryAddress);
+        require(_beneficiaryAddress != 0x0,"banificiary account error");
+        beneficiaryAddress = _beneficiaryAddress;
+        propertyId = _propertyId;
+        startingDate = now;
+        bidTime = _bidTime;
+        endingDate = now + bidTime;
+        startingBid = _startingBid;
+        topBid = startingBid;
+        auctionComplete = false;
+        realEstateRegistry = RealEstateRegistry(_realEstateRegistryAddress);
+    }
+    
+    function setTakeProfit(uint256 _takeProfit)
+        onlyIfWhitelisted(msg.sender)
+        public
+    {
+        autoCloseable = true;
+        takeProfit = _takeProfit;
+    }
+    
+    function bid()
+        onlyIfPending()
+        public
+        payable
+    {
+       require(msg.value > topBid,"msg.sender not topBidder");
+       if (topBidder != 0x0) {
+           returnsPending[topBidder] += topBid;
+       }
+       topBidder = msg.sender;
+       topBid = msg.value;
+       emit LogTopBidIncreased(msg.sender, msg.value);
+       if(autoCloseable && topBid >= takeProfit){
+           internalCloseAuction();
+       }
+    }
+    
+    function withdraw()
+        public
+        returns(bool)
+    {
+        uint bidAmount = returnsPending[msg.sender];
+        if(bidAmount > 0 && msg.sender == topBidder){
+            returnsPending[msg.sender] = 0;
+            if(!msg.sender.send(bidAmount)){
+                returnsPending[msg.sender] = bidAmount;
+                return false;
+            }
+        }
+        return true;
+    }
+    
+    function closeAuction() 
+        onlyIfWhitelisted(msg.sender)
+        public
+    {
+        internalCloseAuction();
+    }
+    
+    function internalCloseAuction()
+        private
+    {
+        require(!auctionComplete,"not complete"); 
+        auctionComplete = true;
+        emit LogAuctionResult(topBidder, topBid);
+        beneficiaryAddress.transfer(topBid);
+        returnsPending[topBidder] = 0;
+        require(realEstateRegistry.transferPropertyOwnershipSale(beneficiaryAddress, topBidder, propertyId, address(this)),"error of other");
+    }
+    
+    modifier onlyIfPending(){
+        require(now <= endingDate && !auctionComplete);   
+        _;
+    }
+}
+
+/**
+@title RealEstateRegistry
+@author Abdelhamid Bakhta
+@notice RealEstateRegistry is a smart contract 
+@notice for managing a decentralized real estate system
+*/
+contract RealEstateRegistry is Whitelist, Pausable, Destructible{
+    using SafeMath for uint;
+    
+    enum Category {Apartment, MultiFamilyHouse, TerracedHouse, Condominium, Cooperative, Vilas, Other}
+    
+    address constant none = 0x0;
+    
+    struct ResidentialRealEstate {
+        bool exists;
+        Category category;
+    }
+    
+    struct PropertyCollection{
+        bool exists;
+        uint numberOfProperties;
+        mapping(bytes32 => ResidentialRealEstate) residencies;
+    }
+    
+    struct PropertyInfo{
+        bool exists;
+        address owner;
+        PropertySaleAuction sale;
+    }
+    
+    // registry of owned properties per user
+    mapping (address => PropertyCollection) private ownerRegistry;
+    // registry of managed properties
+    mapping (bytes32 => PropertyInfo) private propertyRegistry;
+    
+    // events
+    /// @notice triggered when a property ownership is assigned to a user
+    event LogPropertyOwnershipAssigned(address indexed to, bytes32 indexed propertyId);
+    /// @notice triggered when a property ownership is removed to a user
+    event LogPropertyOwnershipRemoved(address indexed to, bytes32 indexed propertyId);
+    /// @notice triggered when a property ownership is transferred from a user to another user
+    event LogPropertyOwnershipTransferred(address indexed from, address indexed to, bytes32 indexed propertyId);
+    /// @notice triggered when a sale starts
+    event LogSaleStarted(address indexed owner, bytes32 propertyId, uint256 startingBid, uint256 bidTime);
+    /// @notice triggered when a sale has been achieved
+    event LogSaleTerminated(address indexed seller, address indexed buyer, bytes32 propertyId);
+    
+    constructor() public{
+        addAddressToWhitelist(msg.sender);
+    }
+    
+    /**
+    * @dev Allows the whitelisted users to assign the ownership of a property to a given user
+    * @param propertyId The identifier of the property.
+    * @param _newOwner The address to assign property ownership to.
+    * @param _category The category of property.
+    */
+    function assignPropertyOwnership(address _newOwner, bytes32 propertyId, uint _category )
+    onlyIfWhitelisted(msg.sender)
+    onlyValidCategory(_category)
+    whenNotPaused
+    public returns (bool){
+        
+        if(!ownerRegistry[_newOwner].exists){
+            ownerRegistry[_newOwner] = PropertyCollection({
+            exists: true,
+            numberOfProperties: 0});
+        }
+        
+        require(propertyRegistry[propertyId].owner == none);
+        require(!isOwnerOf(_newOwner, propertyId));  
+        internalAssignPropertyOwnership(_newOwner, propertyId, _category);
+        emit LogPropertyOwnershipAssigned(_newOwner, propertyId);
+        return true;
+    }
+    
+    function internalAssignPropertyOwnership(address to, bytes32 propertyId, uint _category)
+        private
+    {
+        ownerRegistry[to].residencies[propertyId] = ResidentialRealEstate({
+            exists: true,
+            category: Category(_category)
+        });
+        
+        ownerRegistry[to].numberOfProperties++;
+        if(!propertyRegistry[propertyId].exists){
+            propertyRegistry[propertyId] = PropertyInfo({
+                exists: true,
+                owner: to,
+                sale: PropertySaleAuction(0)
+            });
+        }else{
+            propertyRegistry[propertyId].owner = to;
+            propertyRegistry[propertyId].sale = PropertySaleAuction(0);
+        }
+    }
+    
+    function removePropertyOwnership(address user, bytes32 propertyId)
+        onlyIfWhitelisted(msg.sender)
+        whenNotPaused
+        public
+    {
+        require(isOwnerOf(user, propertyId));
+        internalRemovePropertyOwnership(user, propertyId);
+        emit LogPropertyOwnershipRemoved(user, propertyId);
+    }
+    
+    function internalRemovePropertyOwnership(address user, bytes32 propertyId)
+        private
+    {
+        delete ownerRegistry[user].residencies[propertyId];
+        ownerRegistry[user].numberOfProperties--;
+        propertyRegistry[propertyId].owner = none;
+    }
+    
+    function transferPropertyOwnership(address from, address to, bytes32 propertyId)
+        whenNotPaused
+        public
+    {
+        require(isOwnerOf(msg.sender, propertyId) || hasRole(msg.sender, "whitelist"));
+        internalTransferPropertyOwnership(from, to, propertyId);
+    }
+    
+    function transferPropertyOwnershipSale(address seller, address buyer, bytes32 propertyId, address contractaddr)
+        whenNotPaused
+        public
+        returns(bool)
+    {
+        require(isOwnerOf(seller, propertyId),"owner product error");
+        require(contractaddr == address(propertyRegistry[propertyId].sale),"msg.sender error");
+        internalTransferPropertyOwnership(seller, buyer, propertyId);
+        emit LogSaleTerminated(seller, buyer, propertyId);
+        return true;
+    }
+    
+    function internalTransferPropertyOwnership(address from, address to, bytes32 propertyId)
+        whenNotPaused
+        public
+    {
+        Category _category = ownerRegistry[from].residencies[propertyId].category;
+        internalRemovePropertyOwnership(from, propertyId);
+        internalAssignPropertyOwnership(to, propertyId,uint( _category));
+        emit LogPropertyOwnershipTransferred(from, to , propertyId);
+    }
+    
+    function putToSale(bytes32 propertyId, uint256 startingBid, uint256 bidTime,address salecontract)
+        onlyIfWhitelisted(msg.sender)
+        onlyIfNotOnSale(propertyId)
+        public
+    {
+        internalSell(propertyRegistry[propertyId].owner, propertyId, startingBid, bidTime,salecontract);   
+    }
+    
+    function sell(bytes32 propertyId, uint256 startingBid, uint256 bidTime,address sellcontract)
+        onlyIfNotOnSale(propertyId)
+        whenNotPaused
+        public
+    {
+        internalSell(msg.sender, propertyId, startingBid, bidTime,sellcontract);
+    }
+    
+
+    function internalSell(address owner, bytes32 propertyId, uint256 startingBid, uint256 bidTime, address contractaddr)
+        onlyIfNotOnSale(propertyId)
+        private
+    {
+        require(msg.sender == propertyRegistry[propertyId].owner);
+        require(isOwnerOf(owner, propertyId));
+        //PropertySaleAuction auction = new PropertySaleAuction(address(this), owner, propertyId, startingBid, bidTime);
+        propertyRegistry[propertyId].sale = PropertySaleAuction(contractaddr);
+        emit LogSaleStarted(owner, propertyId, startingBid, bidTime);
+    }
+    
+    /**
+    * @dev Gets the owner of the specified property.
+    * @param propertyId The address to query the owner.
+    * @return An address representing the owner of the passed property.
+    */
+    function whoIsOwnerOf(bytes32 propertyId)
+        public
+        view
+        returns(address)
+    {
+        return propertyRegistry[propertyId].owner;
+    }
+    
+    function amIOwnerOf(bytes32 propertyId)
+        public 
+        view
+        returns(bool)
+    {
+        return isOwnerOf(msg.sender, propertyId);    
+    }
+    
+    function isOwnerOf(address user, bytes32 propertyId)
+        public
+        view
+        returns (bool)
+    {
+        return ownerRegistry[user].residencies[propertyId].exists && propertyRegistry[propertyId].owner == user;
+    }
+    
+    function isOnSale(bytes32 propertyId)
+        public
+        view
+        returns(bool)
+    {
+        return propertyRegistry[propertyId].sale != PropertySaleAuction(0x0);
+    }
+    
+    function getSaleContract(bytes32 propertyId)
+        public 
+        view
+        returns(address)
+    {
+        return propertyRegistry[propertyId].sale;   
+    }
+    
+   
+    /* Modifiers */
+    modifier onlyValidCategory(uint _category){
+        require((uint(Category.Other) >= _category));
+        _;
+    }
+    
+    modifier onlyIfNotOnSale(bytes32 propertyId){
+        require(propertyRegistry[propertyId].sale == PropertySaleAuction(0x0));
+        _;
+    }
+    
+    modifier onlyIfOnSale(bytes32 propertyId){
+        require(propertyRegistry[propertyId].sale != PropertySaleAuction(0x0));
+        _;
+    }
+    
+    /* Fallback function */
+    function () public {}
+}
